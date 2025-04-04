@@ -40,11 +40,24 @@ describe('Bank API', () => {
         expect(response.body.length).toBe(2);
     });
 
-    // test('Should return 404 when bank is not found', async () => {
-    //     prisma.bank.findUnique.mockResolvedValue(null);
+    test('Should return 200 when found bank', async () => {
+        prisma.bank.findUnique.mockResolvedValue({
+            id: 99,
+            name: 'Test Bank',
+        });
 
-    //     const response = await request(app).get('/api/banks/99');
+        const response = await request(app).get('/api/banks/99');
 
-    //     expect(response.status).toBe(404);
-    // });
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('id', 99);
+        expect(response.body).toHaveProperty('name', 'Test Bank');
+    });
+
+    test('Should return 404 when bank is not found', async () => {
+        prisma.bank.findUnique.mockResolvedValue(null);
+
+        const response = await request(app).get('/api/banks/99');
+
+        expect(response.status).toBe(404);
+    });
 });
