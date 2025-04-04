@@ -13,6 +13,21 @@ jobs:
           name: Rodar testes
           command: npm test
 
+  migrate:
+    docker:
+      - image: node:22
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependências
+          command: npm install
+      - run:
+          name: Gerar Prisma Client
+          command: npx prisma generate
+      - run:
+          name: Aplicar Migrations
+          command: npx prisma migrate deploy
+
   deploy:
     docker:
       - image: cimg/base:current
@@ -28,9 +43,12 @@ workflows:
   ci_cd:
     jobs:
       - test
-      - deploy:
+      - migrate:
           requires:
             - test
+      - deploy:
+          requires:
+            - migrate
           filters:
             branches:
               only: main
