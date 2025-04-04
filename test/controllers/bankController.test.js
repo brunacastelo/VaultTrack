@@ -7,6 +7,7 @@ jest.mock('../../src/dbClient', () => ({
         create: jest.fn(),
         findMany: jest.fn(),
         findUnique: jest.fn(),
+        delete: jest.fn(),
     },
 }));
 
@@ -60,4 +61,13 @@ describe('Bank API', () => {
 
         expect(response.status).toBe(404);
     });
+
+    test('Should return 204 when delete a bank', async () => {
+        prisma.bank.delete.mockResolvedValue({});
+
+        const response = await request(app).delete('/api/banks/99');
+
+        expect(response.status).toBe(204);
+    });
+
 });
