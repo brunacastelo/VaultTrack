@@ -8,6 +8,7 @@ jest.mock('../../src/dbClient', () => ({
         findMany: jest.fn(),
         findUnique: jest.fn(),
         delete: jest.fn(),
+        update: jest.fn(),
     },
 }));
 
@@ -68,6 +69,19 @@ describe('Bank API', () => {
         const response = await request(app).delete('/api/banks/99');
 
         expect(response.status).toBe(204);
+    });
+
+    test('Should return 200 when update a bank', async () => {
+        prisma.bank.update.mockResolvedValue({
+            id: 99,
+            name: 'Updated Bank',
+        });
+
+        const response = await request(app)
+            .patch('/api/banks/99')
+            .send({ name: 'Updated Bank' });
+
+        expect(response.status).toBe(200);
     });
 
 });

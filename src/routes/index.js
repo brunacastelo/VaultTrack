@@ -10,5 +10,6 @@ router.post('/banks', bankController.createBank);
 router.get('/banks', bankController.getAllBanks);
 router.get('/banks/:id', bankController.getBankById);
 router.delete('/banks/:id', bankController.deleteBank);
+router.patch('/banks/:id', bankController.updateBank);
 
 module.exports = router;
