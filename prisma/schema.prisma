@@ -27,4 +27,14 @@ model Investment {
   bankId         Int
   bank           Bank     @relation(fields: [bankId], references: [id])
   createdAt      DateTime @default(now())
+  histories        InvestmentHistory[]
+}
+
+model InvestmentHistory {
+  id             Int       @id @default(autoincrement())
+  investmentId   Int
+  date           DateTime
+  value          Decimal 
+  investment     Investment @relation(fields: [investmentId], references: [id])
+  @@unique([investmentId, date])
 }
