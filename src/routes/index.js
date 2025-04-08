@@ -14,6 +14,39 @@ router.get('/banks/:id', bankController.getBankById);
 router.delete('/banks/:id', bankController.deleteBank);
 router.patch('/banks/:id', bankController.updateBank);
 
+/**
+ * @swagger
+ * /investments:
+ *   post:
+ *     summary: Cria um novo investimento
+ *     tags: [Investments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - bankId
+ *               - maturityDate
+ *               - isLocked
+ *             properties:
+ *               amount:
+ *                 type: number
+ *               bankId:
+ *                 type: integer
+ *               maturityDate:
+ *                 type: string
+ *                 format: date
+ *               isLocked:
+ *                 type: boolean
+ *     responses:
+ *       201:
+ *         description: Investimento criado com sucesso
+ *       400:
+ *         description: Erro de validação
+ */
 router.post('/investments', investmentController.createInvestment);
 router.get('/investments', investmentController.getAllInvestments);
 
