@@ -5,6 +5,9 @@ const investmentRoutes = require('../../src/routes')
 jest.mock('../../src/dbClient', () => ({
     investment: {
         create: jest.fn(),
+        findMany: jest.fn(),
+        delete: jest.fn(),
+        findUnique: jest.fn()
     },
     bank: {
         findUnique: jest.fn(),
@@ -29,7 +32,7 @@ describe('Investment API', () => {
         prisma.investment.create.mockResolvedValue(
             {
                 id: 1,
-                amount: '1.00',
+                initialAmount: '1.00',
                 isLocked: true,
                 maturityDate: '2025-12-31T00:00:00.000Z',
                 bankId: 3,
@@ -41,7 +44,7 @@ describe('Investment API', () => {
             .post('/api/investments')
             .send(
                 { 
-                    amount: 1.00,
+                    initialAmount: 1.00,
                     isLocked: true,
                     maturityDate: '2025-12-31T00:00:00.000Z',
                     bankId: 3
@@ -52,7 +55,7 @@ describe('Investment API', () => {
         expect(response.body).toEqual(
             { 
                 id: 1, 
-                amount: '1.00',
+                initialAmount: '1.00',
                 bankId: 3,
                 createdAt: '2025-04-07T14:54:44.366Z',
                 isLocked: true,
@@ -67,7 +70,7 @@ describe('Investment API', () => {
             .post('/api/investments')
             .send(
                 { 
-                    amount: 1.00,
+                    initialAmount: 1.00,
                     isLocked: true,
                     maturityDate: '2025-12-31T00:00:00.000Z',
                     bankId: 3
@@ -78,5 +81,57 @@ describe('Investment API', () => {
         expect(response.body).toEqual({error: 'Bank not found!'});
     });
 
+    test('Should get all investment', async () => {
+        prisma.investment.findMany.mockResolvedValue([
+            {
+                id: 1,
+                initialAmount: '2.13',
+                isLocked: true,
+                maturityDate: '2025-12-31T00:00:00.000Z',
+                bankId: 2,
+                createdAt: '2025-04-09T18:42:43.887Z'
+            },
+            {
+                id: 2,
+                initialAmount: '12.03',
+                isLocked: true,
+                maturityDate: '2025-12-31T00:00:00.000Z',
+                bankId: 2,
+                createdAt: '2025-04-09T18:42:43.887Z'
+            }
+        ]);
+
+        const response = await request(app).get('/api/investments');
+
+        expect(response.status).toBe(200);
+        expect(response.body.length).toBe(2);
+    });
+
+    test('Should return 200 when found investment by id', async () => {
+        prisma.investment.findUnique.mockResolvedValue(
+            {
+                id: 99,
+                initialAmount: '2.13',
+                isLocked: true,
+                maturityDate: '2025-12-31T00:00:00.000Z',
+                bankId: 2,
+                createdAt: '2025-04-09T18:42:43.887Z'
+            },
+        );
+
+        const response = await request(app).get('/api/investments/99');
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('id', 99);
+        expect(response.body).toHaveProperty('initialAmount', '2.13');
+    });
+
+    test('Should return 204 when delete an investment', async () => {
+        prisma.investment.delete.mockResolvedValue({});
+
+        const response = await request(app).delete('/api/investments/99');
+
+        expect(response.status).toBe(204);
+    });
     
 });

@@ -21,20 +21,19 @@ model Bank {
 
 model Investment {
   id             Int      @id @default(autoincrement())
-  amount         Float
+  initialAmount  Decimal  @db.Money
   isLocked       Boolean
   maturityDate   DateTime
   bankId         Int
   bank           Bank     @relation(fields: [bankId], references: [id])
   createdAt      DateTime @default(now())
-  histories        InvestmentHistory[]
+  histories      InvestmentHistory[]
 }
 
 model InvestmentHistory {
   id             Int       @id @default(autoincrement())
   investmentId   Int
   date           DateTime
-  value          Decimal 
+  currentAmount  Decimal    @db.Money
   investment     Investment @relation(fields: [investmentId], references: [id])
-  @@unique([investmentId, date])
 }

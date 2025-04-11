@@ -9,7 +9,7 @@ const createInvestment = async (req, res) => {
             return res.status(400).json({ error: parsed.error.errors[0].message });
         }
 
-        const { amount, bankId, ...rest } = parsed.data;
+        const { initialAmount, bankId, ...rest } = parsed.data;
 
         const bank = await prisma.bank.findUnique({
             where: { id: bankId },
@@ -21,13 +21,13 @@ const createInvestment = async (req, res) => {
 
         const investment = await prisma.investment.create({
             data: {
-                amount: amount,
+                initialAmount: initialAmount,
                 bankId: bankId,
                 ...rest,
             },
         });
 
-        investment.amount = new Decimal(investment.amount).toFixed(2);
+        investment.initialAmount = new Decimal(investment.initialAmount).toFixed(2);
 
         res.status(201).json(investment);
 
@@ -46,4 +46,33 @@ const getAllInvestments = async (req, res) => {
     }
 };
 
-module.exports = { createInvestment, getAllInvestments };
+const getInvestmentById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const investment = await prisma.investment.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!investment) return res.status(404).json({ error: 'Investment not found' });
+
+        res.json(investment);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching investment', details: error.message });
+    }
+};
+
+const deleteInvestment = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await prisma.investment.delete({
+            where: { id: parseInt(id) },
+        });
+
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'Error deleting investment', details: error.message });
+    }
+};
+
+module.exports = { createInvestment, getAllInvestments, getInvestmentById, deleteInvestment };

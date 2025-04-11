@@ -17,11 +17,11 @@ const getTotalInvestment = async (req, res) => {
 
         const investments = await prisma.investment.findMany({
             where: filters,
-            select: { amount: true }
+            select: { initialAmount: true }
         });
 
         const total = investments.reduce((sum, inv) => {
-            return sum.plus(inv.amount);
+            return sum.plus(inv.initialAmount);
         }, new Decimal(0));
 
         res.json({ totalAmount: total.toFixed(2) });
