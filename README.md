@@ -28,7 +28,7 @@ cd vaulttrack
 npm install
 ```
 
-### 3. Configure o ambiente
+### 3. Configure o ambiente 
 
 Crie um arquivo .env na raiz do projeto com o seguinte conteúdo:
 
