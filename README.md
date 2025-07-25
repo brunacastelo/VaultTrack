@@ -41,7 +41,7 @@ DATABASE_URL=postgresql://usuario:senha@localhost:5432/vaulttrack
 npx prisma migrate dev --name init
 ```
 
-### 5. Inicie o servidor
+### 5. Inicie o servidor 
 ```
 npm start
 ```
